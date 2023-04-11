@@ -63,11 +63,14 @@ function TableComponent() {
         );
 
         setData((prevData) => {
-          if (prevData.length === 0) {
-            return response.data.data;
-          } else {
-            return [...prevData, ...response.data.data];
-          }
+          const newData = response.data.data.filter(
+            (transaction: Transaction) =>
+              !prevData.some(
+                (prevTransaction) =>
+                  prevTransaction.transactionId === transaction.transactionId
+              )
+          );
+          return [...prevData, ...newData];
         });
       } catch (error) {
         console.log(error);

@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import TableHeader from "./TableHeader";
 import { transactionColumns } from "../helper";
 import GrayColumn from "./GrayColumn";
+import WhiteColumn from "./WhiteColumn";
 
-interface Transaction {
+type Transaction = {
   destinationAmountDetails: {
     transactionCurrency: string;
     transactionAmount: number;
@@ -22,33 +23,68 @@ interface Transaction {
   originUserId: string;
   type: string;
   status: string;
-}
+};
 
 function TableComponent() {
-  const [data, setData] = useState<Transaction[]>([]);
+  const [data, setData] = useState<Transaction[]>([]); //state for data from API
+  const [page, setPage] = useState(1); //state for current page number
+  const tableContainerRef = useRef<HTMLDivElement>(null); //useRef for scrolllistener in paging
 
+  //logic for scroll hits bottom of the table
   useEffect(() => {
-    loadUsersData();
+    const handleScroll = () => {
+      const tableContainer = tableContainerRef.current;
+      if (!tableContainer) {
+        return;
+      }
+      const { scrollTop, clientHeight, scrollHeight } = tableContainer;
+      if (scrollTop + clientHeight >= scrollHeight - 1) {
+        setPage((prevPage) => prevPage + 1);
+      }
+    };
+
+    const tableContainer = tableContainerRef.current;
+    if (tableContainer) {
+      tableContainer.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      if (tableContainer) {
+        tableContainer.removeEventListener("scroll", handleScroll);
+      }
+    };
   }, []);
 
-  const page = 1;
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const response = await axios.get<Transaction[]>(
+          `http://localhost:3000/data?page=${page}`
+        );
 
-  const loadUsersData = async () => {
-    try {
-      const response = await axios.get<Transaction[]>(
-        `http://localhost:3000/data?page=${page}`
-      );
-      setData(response.data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+        setData((prevData) => {
+          if (prevData.length === 0) {
+            return response.data.data;
+          } else {
+            return [...prevData, ...response.data.data];
+          }
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    loadUserData();
+  }, [page]);
 
   console.log(data);
 
   return (
     <div className="py-32">
-      <div className="mx-auto shadow-md relative rounded-2xl border-2 w-[90rem] h-[36rem] overflow-y-scroll">
+      <div
+        className="mx-auto shadow-md relative rounded-2xl border-2 w-[90rem] h-[36rem] overflow-y-scroll table-scroll"
+        ref={tableContainerRef}
+      >
         <table className="text-sm text-left text-gray-500">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50">
             <tr className="px-6 py-3">
@@ -60,61 +96,56 @@ function TableComponent() {
           <tbody>
             {data.map((transactions) => (
               <tr key={transactions.transactionId}>
-                <td className="border-b border-gray-200 px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50">
+                <GrayColumn>
                   {transactions?.destinationAmountDetails?.transactionCurrency
                     ? transactions?.destinationAmountDetails
                         ?.transactionCurrency
                     : "--"}
-                </td>
-                {/* <td className="border-b border-gray-200 px-6 py-4">
-                  {transactions?.destinationAmountDetails?.transactionAmount
-                    ? transactions?.destinationAmountDetails?.transactionAmount
-                    : "--"}
-                </td> */}
-                <GrayColumn>
-                  {transactions?.destinationAmountDetails?.transactionAmount
-                    ? transactions?.destinationAmountDetails?.transactionAmount
-                    : "--"}
                 </GrayColumn>
-                <td className="border-b border-gray-200 px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50">
+                <WhiteColumn>
+                  {transactions?.destinationAmountDetails?.transactionAmount
+                    ? transactions?.destinationAmountDetails?.transactionAmount
+                    : "--"}
+                </WhiteColumn>
+                <GrayColumn>
                   {transactions.transactionState
                     ? transactions.transactionState
                     : "--"}
-                </td>
-                <td className="border-b border-gray-200 px-6 py-4">
+                </GrayColumn>
+                <WhiteColumn>
                   {transactions?.originAmountDetails?.transactionCurrency
                     ? transactions?.originAmountDetails?.transactionCurrency
                     : "--"}
-                </td>
-                <td className="border-b border-gray-200 px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50">
+                </WhiteColumn>
+                <GrayColumn>
                   {transactions?.originAmountDetails?.transactionAmount
                     ? transactions?.originAmountDetails?.transactionAmount
                     : "--"}
-                </td>
-                <td className="border-b border-gray-200 px-6 py-4">
+                </GrayColumn>
+                <WhiteColumn>
                   {transactions.timestamp.$numberLong
                     ? transactions.timestamp.$numberLong
                     : "--"}
-                </td>
-                <td className="border-b border-gray-200 px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50">
+                </WhiteColumn>
+                <GrayColumn>
                   {transactions.transactionId
                     ? transactions.transactionId
                     : "--"}
-                </td>
-                <td className="border-b border-gray-200 px-6 py-4">
+                </GrayColumn>
+                <WhiteColumn>
                   {transactions.destinationUserId
                     ? transactions.destinationUserId
                     : "--"}
-                </td>
-                <td className="border-b border-gray-200 px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50">
+                </WhiteColumn>
+                <GrayColumn>
                   {transactions.originUserId ? transactions.originUserId : "--"}
-                </td>
-                <td className="border-b border-gray-200 px-6 py-4">
+                </GrayColumn>
+                <WhiteColumn>
                   {transactions.type ? transactions.type : "--"}
-                </td>
-                <td className="border-b border-gray-200 px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50">
+                </WhiteColumn>
+                <GrayColumn>
                   {transactions.status ? transactions.status : "--"}
-                </td>
+                </GrayColumn>
               </tr>
             ))}
           </tbody>

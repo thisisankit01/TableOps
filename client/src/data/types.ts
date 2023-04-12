@@ -16,6 +16,7 @@ export type Transaction = {
   originUserId: string;
   type: string;
   status: string;
+  origin: string;
 };
 
 export type DropdownSelect = {

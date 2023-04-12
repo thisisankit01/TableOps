@@ -7,13 +7,15 @@ import { getTransactions } from "../data/api";
 import { Transaction, DropdownSelect } from "../data/types";
 import { filterItems } from "../data/helper";
 import DropdownButton from "./DropDown";
-import { log } from "console";
 
 function TableComponent() {
   const [data, setData] = useState<Transaction[]>([]); //state for data from API
   const [page, setPage] = useState(1); //state for current page number
   const tableContainerRef = useRef<HTMLDivElement>(null); //useRef for scrolllistener in paging
   const [status, setStatus] = useState("");
+  // const [originGreaterThan, setOriginGreaterThan] = useState<string>("");
+
+  // const originAmount = 600;
 
   //logic for scroll hits bottom of the table
   useEffect(() => {
@@ -73,6 +75,17 @@ function TableComponent() {
     });
   }
 
+  function handleSelectSort() {
+    setData((prevData) => {
+      const sortedData = [...prevData].sort((a, b) => {
+        const aAmount = a?.originAmountDetails?.transactionAmount ?? 0;
+        const bAmount = b?.originAmountDetails?.transactionAmount ?? 0;
+        return aAmount - bAmount;
+      });
+      return sortedData;
+    });
+  }
+
   console.log(status);
 
   console.log(data);
@@ -84,6 +97,11 @@ function TableComponent() {
           options={filterItems}
           label="Filter By"
           handleSelect={handleSelect}
+        />
+        <DropdownButton
+          options={sortItems}
+          label="Sort"
+          handleSelect={handleSelectSort}
         />
       </div>
       <div

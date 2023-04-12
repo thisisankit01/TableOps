@@ -21,6 +21,7 @@ const port = process.env.PORT || 3000;
 app.get("/data", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const page = parseInt(req.query.page, 10);
     const status = req.query.status;
+    // const originAmount = parseInt(req.query.originAmount as string, 10);
     try {
         const result = yield (0, transaction_1.getTransactions)({ page, status });
         res.json(result);

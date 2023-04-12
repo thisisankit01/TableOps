@@ -9,13 +9,13 @@ const API_URL = `http://localhost:3000/data`;
 
 export const getTransactions = async (
   page: number,
-  status?: string,
-  type?: string
+  status?: string
+  // originAmount?: string
 ): Promise<Transaction[]> => {
   try {
     const params = new URLSearchParams();
     if (status) params.append("status", status);
-    if (type) params.append("type", type);
+    // if (originAmount) params.append("originAmount", originAmount);
     const response = await axios.get<data>(
       `${API_URL}?page=${page}&${params.toString()}`
     );
@@ -25,11 +25,3 @@ export const getTransactions = async (
     return [];
   }
 };
-
-// const filteredTransactions = transactions.filter(transaction => {
-//   return transaction.status === "ALLOW" && (transaction.type === "FIAT_DEPOSIT" || transaction.type === "CRYPTO_WITHDRAW");
-// });
-
-// console.log(filteredTransactions);
-//${import.meta.env.SERVER_URL}
-//&status=${status}&type=${type}

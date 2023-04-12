@@ -675,6 +675,7 @@ export const data = [
 export function getTransactions(params: {
   page: number;
   status?: string;
+  // originAmount?: number;
 }): Promise<{
   total: number;
   data: Transaction[];
@@ -683,12 +684,55 @@ export function getTransactions(params: {
   return new Promise((resolve) => {
     setTimeout(() => {
       let searchResult = data; // initialize searchResult to all transactions
+
       // apply filters
       if (status) {
         searchResult = searchResult.filter(
           (t) => t.status?.toLowerCase() === status.toLowerCase()
         );
       }
+
+      // sort by originAmountDetails.transactionAmount in ascending order for values >= originAmount
+      // if (originAmount) {
+      //filter with sort
+      // searchResult = searchResult.filter((t) => {
+      //   if (
+      //     t.originAmountDetails &&
+      //     t.originAmountDetails.transactionAmount >= originAmount
+      //   ) {
+      //     return true;
+      //   } else {
+      //     return false;
+      //   }
+      // });
+      /// sort
+      // searchResult.sort((a, b) => {
+      //   if (
+      //     a.originAmountDetails &&
+      //     a.originAmountDetails.transactionAmount >= originAmount &&
+      //     b.originAmountDetails &&
+      //     b.originAmountDetails.transactionAmount >= originAmount
+      //   ) {
+      //     return (
+      //       a.originAmountDetails.transactionAmount -
+      //       b.originAmountDetails.transactionAmount
+      //     );
+      //   } else if (
+      //     a.originAmountDetails &&
+      //     a.originAmountDetails.transactionAmount >= originAmount
+      //   ) {
+      //     return -1;
+      //   } else if (
+      //     b.originAmountDetails &&
+      //     b.originAmountDetails.transactionAmount >= originAmount
+      //   ) {
+      //     return 1;
+      //   } else {
+      //     return 0;
+      //   }
+      // });
+      // }
+
       // paginate results
       resolve({
         total: searchResult.length,

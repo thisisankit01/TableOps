@@ -52,12 +52,8 @@ export const transactionColumns: TransactionColumn[] = [
 
 export const sortItems: TransactionColumn[] = [
   {
-    key: "origin-amount",
+    key: "origin amount",
     text: "Origin Amount",
-  },
-  {
-    key: "status",
-    text: "Status",
   },
 ];
 

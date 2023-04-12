@@ -1,17 +1,19 @@
 import { useEffect, useState, useRef } from "react";
 import TableHeader from "./TableHeader";
-import { transactionColumns } from "../data/helper";
+import { sortItems, transactionColumns } from "../data/helper";
 import GrayColumn from "./GrayColumn";
 import WhiteColumn from "./WhiteColumn";
 import { getTransactions } from "../data/api";
-import { Transaction } from "../data/types";
+import { Transaction, DropdownSelect } from "../data/types";
+import { filterItems } from "../data/helper";
+import DropdownButton from "./DropDown";
+import { log } from "console";
 
 function TableComponent() {
   const [data, setData] = useState<Transaction[]>([]); //state for data from API
   const [page, setPage] = useState(1); //state for current page number
   const tableContainerRef = useRef<HTMLDivElement>(null); //useRef for scrolllistener in paging
-  let status = "allow";
-  let type = "fiat_deposit";
+  const [status, setStatus] = useState("");
 
   //logic for scroll hits bottom of the table
   useEffect(() => {
@@ -21,7 +23,7 @@ function TableComponent() {
         return;
       }
       const { scrollTop, clientHeight, scrollHeight } = tableContainer;
-      if (scrollTop + clientHeight >= scrollHeight - 1) {
+      if (scrollTop + clientHeight >= scrollHeight) {
         setPage((prevPage) => prevPage + 1);
       }
     };
@@ -40,7 +42,7 @@ function TableComponent() {
 
   useEffect(() => {
     const loadUserData = async () => {
-      const newData = await getTransactions(page, status, type);
+      const newData = await getTransactions(page, status);
       setData((prevData) => {
         const mergedData = [...prevData];
         for (const transaction of newData) {
@@ -58,12 +60,32 @@ function TableComponent() {
     };
 
     loadUserData();
-  }, [page]);
+  }, [page, status]);
+
+  function handleSelect(selectedItem: string) {
+    console.log("Selected item:", selectedItem);
+    setStatus(selectedItem);
+
+    setData((prevData) => {
+      return prevData.filter(
+        (transaction) => transaction.status === selectedItem
+      );
+    });
+  }
+
+  console.log(status);
 
   console.log(data);
 
   return (
-    <div className="py-32">
+    <div className="py-4">
+      <div className="flex justify-center gap-10">
+        <DropdownButton
+          options={filterItems}
+          label="Filter By"
+          handleSelect={handleSelect}
+        />
+      </div>
       <div
         className="mx-auto shadow-md relative rounded-2xl border-2 w-[90rem] h-[36rem] no-scrollbar overflow-y-scroll table-scroll"
         ref={tableContainerRef}

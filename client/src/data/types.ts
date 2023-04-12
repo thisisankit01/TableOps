@@ -17,3 +17,8 @@ export type Transaction = {
   type: string;
   status: string;
 };
+
+export type DropdownSelect = {
+  key: string;
+  text: string;
+};

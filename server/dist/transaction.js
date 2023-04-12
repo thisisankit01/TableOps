@@ -662,16 +662,13 @@ exports.data = [
     },
 ];
 function getTransactions(params) {
-    const { page, status, type } = params;
+    const { page, status } = params;
     return new Promise((resolve) => {
         setTimeout(() => {
             let searchResult = exports.data; // initialize searchResult to all transactions
             // apply filters
             if (status) {
                 searchResult = searchResult.filter((t) => { var _a; return ((_a = t.status) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === status.toLowerCase(); });
-            }
-            if (type) {
-                searchResult = searchResult.filter((t) => { var _a; return ((_a = t.type) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === type.toLowerCase(); });
             }
             // paginate results
             resolve({

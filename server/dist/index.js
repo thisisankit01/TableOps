@@ -21,9 +21,8 @@ const port = process.env.PORT || 3000;
 app.get("/data", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const page = parseInt(req.query.page, 10);
     const status = req.query.status;
-    const type = req.query.type;
     try {
-        const result = yield (0, transaction_1.getTransactions)({ page, status, type });
+        const result = yield (0, transaction_1.getTransactions)({ page, status });
         res.json(result);
     }
     catch (err) {

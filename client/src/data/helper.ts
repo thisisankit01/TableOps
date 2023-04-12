@@ -61,4 +61,9 @@ export const sortItems: TransactionColumn[] = [
   },
 ];
 
-// export const filterItems: TransactionColumn
+export const filterItems: TransactionColumn[] = [
+  {
+    key: "allow",
+    text: "allow",
+  },
+];

@@ -675,12 +675,11 @@ export const data = [
 export function getTransactions(params: {
   page: number;
   status?: string;
-  type?: string;
 }): Promise<{
   total: number;
   data: Transaction[];
 }> {
-  const { page, status, type } = params;
+  const { page, status } = params;
   return new Promise((resolve) => {
     setTimeout(() => {
       let searchResult = data; // initialize searchResult to all transactions
@@ -690,12 +689,6 @@ export function getTransactions(params: {
           (t) => t.status?.toLowerCase() === status.toLowerCase()
         );
       }
-      if (type) {
-        searchResult = searchResult.filter(
-          (t) => t.type?.toLowerCase() === type.toLowerCase()
-        );
-      }
-
       // paginate results
       resolve({
         total: searchResult.length,

@@ -49,3 +49,16 @@ export const transactionColumns: TransactionColumn[] = [
     text: "Status",
   },
 ];
+
+export const sortItems: TransactionColumn[] = [
+  {
+    key: "origin-amount",
+    text: "Origin Amount",
+  },
+  {
+    key: "status",
+    text: "Status",
+  },
+];
+
+// export const filterItems: TransactionColumn

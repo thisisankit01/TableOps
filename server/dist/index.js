@@ -17,11 +17,13 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const transaction_1 = require("./transaction");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 app.get("/data", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { page } = req.query;
+    const page = parseInt(req.query.page, 10);
+    const status = req.query.status;
+    const type = req.query.type;
     try {
-        const result = yield (0, transaction_1.getTransactions)({ page });
+        const result = yield (0, transaction_1.getTransactions)({ page, status, type });
         res.json(result);
     }
     catch (err) {

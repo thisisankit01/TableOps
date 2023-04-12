@@ -674,15 +674,29 @@ export const data = [
 
 export function getTransactions(params: {
   page: number;
-  // ... filters, sorting
+  status?: string;
+  type?: string;
 }): Promise<{
   total: number;
   data: Transaction[];
 }> {
-  const { page } = params;
+  const { page, status, type } = params;
   return new Promise((resolve) => {
     setTimeout(() => {
-      const searchResult = data; // filtering, sorting
+      let searchResult = data; // initialize searchResult to all transactions
+      // apply filters
+      if (status) {
+        searchResult = searchResult.filter(
+          (t) => t.status?.toLowerCase() === status.toLowerCase()
+        );
+      }
+      if (type) {
+        searchResult = searchResult.filter(
+          (t) => t.type?.toLowerCase() === type.toLowerCase()
+        );
+      }
+
+      // paginate results
       resolve({
         total: searchResult.length,
         data: searchResult.slice((page - 1) * 20, page * 20),

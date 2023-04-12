@@ -1,34 +1,17 @@
 import { useEffect, useState, useRef } from "react";
-import axios from "axios";
 import TableHeader from "./TableHeader";
-import { transactionColumns } from "../helper";
+import { transactionColumns } from "../data/helper";
 import GrayColumn from "./GrayColumn";
 import WhiteColumn from "./WhiteColumn";
-
-type Transaction = {
-  destinationAmountDetails: {
-    transactionCurrency: string;
-    transactionAmount: number;
-  };
-  transactionState: string;
-  originAmountDetails: {
-    transactionCurrency: string;
-    transactionAmount: number;
-  };
-  timestamp: {
-    $numberLong: string;
-  };
-  transactionId: string;
-  destinationUserId: string;
-  originUserId: string;
-  type: string;
-  status: string;
-};
+import { getTransactions } from "../data/api";
+import { Transaction } from "../data/types";
 
 function TableComponent() {
   const [data, setData] = useState<Transaction[]>([]); //state for data from API
   const [page, setPage] = useState(1); //state for current page number
   const tableContainerRef = useRef<HTMLDivElement>(null); //useRef for scrolllistener in paging
+  let status = "allow";
+  let type = "fiat_deposit";
 
   //logic for scroll hits bottom of the table
   useEffect(() => {
@@ -57,24 +40,21 @@ function TableComponent() {
 
   useEffect(() => {
     const loadUserData = async () => {
-      try {
-        const response = await axios.get<Transaction[]>(
-          `http://localhost:3000/data?page=${page}`
-        );
-
-        setData((prevData) => {
-          const newData = response.data.data.filter(
-            (transaction: Transaction) =>
-              !prevData.some(
-                (prevTransaction) =>
-                  prevTransaction.transactionId === transaction.transactionId
-              )
-          );
-          return [...prevData, ...newData];
-        });
-      } catch (error) {
-        console.log(error);
-      }
+      const newData = await getTransactions(page, status, type);
+      setData((prevData) => {
+        const mergedData = [...prevData];
+        for (const transaction of newData) {
+          if (
+            !prevData.some(
+              (prevTransaction) =>
+                prevTransaction.transactionId === transaction.transactionId
+            )
+          ) {
+            mergedData.push(transaction);
+          }
+        }
+        return mergedData;
+      });
     };
 
     loadUserData();
@@ -85,7 +65,7 @@ function TableComponent() {
   return (
     <div className="py-32">
       <div
-        className="mx-auto shadow-md relative rounded-2xl border-2 w-[90rem] h-[36rem] overflow-y-scroll table-scroll"
+        className="mx-auto shadow-md relative rounded-2xl border-2 w-[90rem] h-[36rem] no-scrollbar overflow-y-scroll table-scroll"
         ref={tableContainerRef}
       >
         <table className="text-sm text-left text-gray-500">

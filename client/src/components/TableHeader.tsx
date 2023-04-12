@@ -1,5 +1,3 @@
-import React from "react";
-
 interface TableHeaderProps {
   key: string;
   text: string;

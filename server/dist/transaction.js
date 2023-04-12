@@ -662,10 +662,18 @@ exports.data = [
     },
 ];
 function getTransactions(params) {
-    const { page } = params;
+    const { page, status, type } = params;
     return new Promise((resolve) => {
         setTimeout(() => {
-            const searchResult = exports.data; // filtering, sorting
+            let searchResult = exports.data; // initialize searchResult to all transactions
+            // apply filters
+            if (status) {
+                searchResult = searchResult.filter((t) => { var _a; return ((_a = t.status) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === status.toLowerCase(); });
+            }
+            if (type) {
+                searchResult = searchResult.filter((t) => { var _a; return ((_a = t.type) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === type.toLowerCase(); });
+            }
+            // paginate results
             resolve({
                 total: searchResult.length,
                 data: searchResult.slice((page - 1) * 20, page * 20),

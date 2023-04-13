@@ -7,7 +7,7 @@ type data = {
   data: Transaction[];
 };
 
-const API_URL = `http://localhost:3000/data`;
+const API_URL = `https://flagright-backend-0a26.onrender.com/data`;
 
 export const getTransactions = async (
   page: number,

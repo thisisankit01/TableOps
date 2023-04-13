@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import TableHeader from "./TableHeader";
 import { sortItems, transactionColumns } from "../data/helper";
-import GrayColumn from "./GrayColumn";
-import WhiteColumn from "./WhiteColumn";
+import { GrayColumn } from "./Column";
+import { WhiteColumn } from "./Column";
 import { getTransactions } from "../data/api";
 import { Transaction, DropdownSelect } from "../data/types";
 import { filterItems } from "../data/helper";
@@ -13,11 +13,7 @@ function TableComponent() {
   const [page, setPage] = useState(1); //state for current page number
   const tableContainerRef = useRef<HTMLDivElement>(null); //useRef for scrolllistener in paging
   const [status, setStatus] = useState("");
-  // const [originGreaterThan, setOriginGreaterThan] = useState<string>("");
 
-  // const originAmount = 600;
-
-  //logic for scroll hits bottom of the table
   useEffect(() => {
     const handleScroll = () => {
       const tableContainer = tableContainerRef.current;
@@ -42,22 +38,29 @@ function TableComponent() {
     };
   }, []);
 
+  // change page with status here
   useEffect(() => {
     const loadUserData = async () => {
       const newData = await getTransactions(page, status);
       setData((prevData) => {
-        const mergedData = [...prevData];
-        for (const transaction of newData) {
-          if (
-            !prevData.some(
-              (prevTransaction) =>
-                prevTransaction.transactionId === transaction.transactionId
-            )
-          ) {
-            mergedData.push(transaction);
+        if (page === 1) {
+          // if page number is 1, replace existing data with new data
+          return newData;
+        } else {
+          // if page number is greater than 1, append new data to existing data
+          const mergedData = [...prevData];
+          for (const transaction of newData) {
+            if (
+              !prevData.some(
+                (prevTransaction) =>
+                  prevTransaction.transactionId === transaction.transactionId
+              )
+            ) {
+              mergedData.push(transaction);
+            }
           }
+          return mergedData;
         }
-        return mergedData;
       });
     };
 
@@ -67,12 +70,7 @@ function TableComponent() {
   function handleSelect(selectedItem: string) {
     console.log("Selected item:", selectedItem);
     setStatus(selectedItem);
-
-    setData((prevData) => {
-      return prevData.filter(
-        (transaction) => transaction.status === selectedItem
-      );
-    });
+    setPage(1); // reset page number to 1
   }
 
   function handleSelectSort() {

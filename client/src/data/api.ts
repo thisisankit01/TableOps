@@ -1,5 +1,7 @@
 import axios from "axios";
 import { Transaction } from "./types";
+import dotenv from "dotenv";
+dotenv.config();
 
 type data = {
   data: Transaction[];
@@ -25,3 +27,5 @@ export const getTransactions = async (
     return [];
   }
 };
+
+//http://localhost:3000/data

@@ -691,49 +691,6 @@ export function getTransactions(params: {
           (t) => t.status?.toLowerCase() === status.toLowerCase()
         );
       }
-
-      // sort by originAmountDetails.transactionAmount in ascending order for values >= originAmount
-      // if (originAmount) {
-      //filter with sort
-      // searchResult = searchResult.filter((t) => {
-      //   if (
-      //     t.originAmountDetails &&
-      //     t.originAmountDetails.transactionAmount >= originAmount
-      //   ) {
-      //     return true;
-      //   } else {
-      //     return false;
-      //   }
-      // });
-      /// sort
-      // searchResult.sort((a, b) => {
-      //   if (
-      //     a.originAmountDetails &&
-      //     a.originAmountDetails.transactionAmount >= originAmount &&
-      //     b.originAmountDetails &&
-      //     b.originAmountDetails.transactionAmount >= originAmount
-      //   ) {
-      //     return (
-      //       a.originAmountDetails.transactionAmount -
-      //       b.originAmountDetails.transactionAmount
-      //     );
-      //   } else if (
-      //     a.originAmountDetails &&
-      //     a.originAmountDetails.transactionAmount >= originAmount
-      //   ) {
-      //     return -1;
-      //   } else if (
-      //     b.originAmountDetails &&
-      //     b.originAmountDetails.transactionAmount >= originAmount
-      //   ) {
-      //     return 1;
-      //   } else {
-      //     return 0;
-      //   }
-      // });
-      // }
-
-      // paginate results
       resolve({
         total: searchResult.length,
         data: searchResult.slice((page - 1) * 20, page * 20),

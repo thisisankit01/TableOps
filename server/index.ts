@@ -16,9 +16,11 @@ app.get("/data", async (req: Request, res: Response) => {
     cors({
       origin: "https://tableops.netlify.app",
       methods: ["GET", "POST"],
-      allowedHeaders: ["Content-Type", "Authorization"],
+      credentials: true,
     })
   );
+
+  app.use(express.json());
 
   try {
     const result = await getTransactions({ page, status });

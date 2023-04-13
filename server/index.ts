@@ -8,19 +8,19 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
+app.use(
+  cors({
+    origin: "https://tableops.netlify.app",
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
+
+app.use(express.json());
+
 app.get("/data", async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string, 10);
   const status = req.query.status as string | undefined;
-
-  app.use(
-    cors({
-      origin: "https://tableops.netlify.app",
-      methods: ["GET", "POST"],
-      credentials: true,
-    })
-  );
-
-  app.use(express.json());
 
   try {
     const result = await getTransactions({ page, status });

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Transaction } from "./types";
-import dotenv from "dotenv";
-dotenv.config();
+// import dotenv from "dotenv";
+// dotenv.config();
 
 type data = {
   data: Transaction[];

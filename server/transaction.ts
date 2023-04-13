@@ -1,14 +1,14 @@
 type Transaction = {
-  transactionId: string;
-  createdAt: number;
-  destinationAmount: number;
-  destinationCurrency: number;
-  originAmount: number;
-  originCurrency: number;
-  destinationUserId: string;
-  originUserId: string;
-  type: string;
-  status: string;
+  transactionId?: string;
+  createdAt?: number;
+  destinationAmount?: number;
+  destinationCurrency?: number;
+  originAmount?: number;
+  originCurrency?: number;
+  destinationUserId?: string;
+  originUserId?: string;
+  type?: string;
+  status?: string;
 };
 
 export const data = [
